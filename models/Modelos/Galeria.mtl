@@ -1,0 +1,35 @@
+newmtl lambert3SG
+illum 4
+Kd 0.80 0.80 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd Fondo.jpg
+Ni 1.00
+newmtl lambert6SG
+illum 4
+Kd 0.80 0.80 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd MesaTabla.jpg
+Ni 1.00
+newmtl lambert8SG
+illum 4
+Kd 0.80 0.80 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd UV_PARED.jpg
+Ni 1.00
+newmtl lambert10SG
+illum 4
+Kd 0.80 0.80 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd Tabla.jpg
+Ni 1.00
+newmtl lambert11SG
+illum 4
+Kd 0.80 0.80 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd PisoImagen.jpg
+Ni 1.00

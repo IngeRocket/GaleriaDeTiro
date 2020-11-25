@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PantallasAvance</title>
+
+	<script type="text/javascript" src="libs/three/three.js"></script>
+	<script type="text/javascript" src="libs/three/MTLLoader.js"></script>
+	<script type="text/javascript" src="libs/three/OBJLoader.js"></script>
+	<script type="text/javascript" src="libs/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="libs/mifacebook.js"></script>
+	<script src="models/Inicio.js"></script>
+	<script src="models/acciones.js"></script>
+	<script type="text/javascript">
+		var scene;
+		var camera;
+		var renderer;
+		var controls;
+		var objects = [];
+		var clock;
+		var deltaTime;	
+		var keys = {};
+		var rayCaster1;
+		var rayCaster2;
+		var isWorldReady = [ false,false,false,false ];
+		
+
+	$(document).ready(	function(){
+
+		//alert("Document Ready Jalando");
+		RevisaNombres();
+		PantallaMenu(); //mostrar la pantalla menu al recargar o cargar
+		//PantallaJugar();
+		//eliminar lo de arriba y este comentario
+
+				$("body").on("click","#Facil", function(){
+				var contenedor = document.getElementById("TituloPantalla");
+				contenedor.remove();
+				contenedor = document.getElementById("Titulos");
+				contenedor.remove();
+				Dificultad = 0;
+				Tiempo=90;
+				PantallaDificultadFacil();	
+				});
+				$("body").on("click","#Medio", function(){
+				var contenedor = document.getElementById("TituloPantalla");
+				contenedor.remove();
+				contenedor = document.getElementById("Titulos");
+				contenedor.remove();
+				Dificultad = 1;
+				Tiempo = 35;
+				PantallaDificultadMedia();
+				});
+				$("body").on("click","#Dificil", function(){
+				var contenedor = document.getElementById("TituloPantalla");
+				contenedor.remove();
+				contenedor = document.getElementById("Titulos");
+				contenedor.remove();
+				Dificultad = 2;
+				Tiempo = 35;
+				PantallaDificultadDificil();
+				});
+				$("body").on("click","#Dificultad", function(){
+				var contenedor = document.getElementById("TituloPantalla");
+				contenedor.remove();
+				contenedor = document.getElementById("Titulos");
+				contenedor.remove();
+				PantallaSeleccionDificultad();
+				});
+				//4pantallas de seleccion de dificultad
+				$("body").on("click","#Entrenamiento", function(){
+				Jugadores = 1;
+				CPU = false;
+				IniciaTodo();
+				});
+				$("body").on("click","#Competir", function(){
+				Jugadores = 1;
+				CPU = true;
+				IniciaTodo();
+				});
+				$("body").on("click","#1Jugador", function(){
+				CPU = false;
+				Jugadores = 1;
+				IniciaTodo();
+				});
+				$("body").on("click","#2Jugador", function(){
+				CPU = false;
+				Jugadores = 2;
+				IniciaTodo();
+				});
+				//fin de esas pantallas
+				$("body").on("click","#IrPantallaJugar", function(){
+						var contenedor = document.getElementById("TituloPantalla");
+						contenedor.remove();
+						contenedor = document.getElementById("Titulos");
+						contenedor.remove();
+						PantallaSeleccionDificultad();		
+					});
+
+				$("body").on("click","#IrPantallaPuntuacion", function(){
+						//alert("Le dió click a Puntuaciones");
+						var contenedor = document.getElementById("TituloPantalla");
+						contenedor.remove();
+						contenedor = document.getElementById("Titulos");
+						contenedor.remove();	
+						PantallaPuntuacion2();
+						CargaPuntuacionMedia();
+						
+					});
+
+				$("body").on("click","#IrPantallaConfiguracion", function(){
+						//alert("Le dió click a Configuracion");
+						var contenedor = document.getElementById("TituloPantalla");
+						contenedor.remove();
+						contenedor = document.getElementById("Titulos");
+						contenedor.remove();
+						PantallaConfiguracion();
+						var cantidad = localStorage.length;
+						var nombre1 = localStorage.getItem("NombrePlayer1");
+						var nombre2 = localStorage.getItem("NombrePlayer2");
+						$("#Jugador1").val(nombre1);
+						$("#Jugador2").val(nombre2);
+					});
+
+				$("body").on("click","#VolverPantallaMenu", function(){
+						//alert("Le dió click a Volver");
+						var contenedor = document.getElementById("TituloPantalla");
+						contenedor.remove();
+						contenedor = document.getElementById("Titulos");
+						contenedor.remove();
+						PantallaMenu();
+					});	
+
+					$("body").on("click","#IrPantallaPausa", function(){
+							//alert("Le dió click a Volver");
+							var contenedor = document.getElementById("TituloPantalla");
+							contenedor.remove();
+							contenedor = document.getElementById("Titulos");
+							contenedor.remove();
+							PantallaPausa();
+						});	
+					$("body").on("click","#BorradoMenu", function(){
+							//alert("Le dió click a Volver");
+							BorradoTotal();
+							PantallaMenu();
+							isWorldReady[0] = false;
+							isWorldReady[1] = false;
+								
+						});	
+
+					$("body").on("click","#lbl_Media", function(){
+								CargaPuntuacionMedia();
+						});
+
+					$("body").on("click","#lbl_Dificil", function(){
+								CargaPuntuacionDificil();			
+						});
+					$("body").on("click","#GuardaP1", function(){
+							var nombre = $("#Jugador1").val(); 
+							GuardaNombreP1(nombre);	
+						});
+					$("body").on("click","#GuardaP2", function(){
+							var nombre = $("#Jugador2").val(); 	
+							GuardaNombreP2(nombre);				
+						});
+					$("body").on("click","#DetenTiempo", function(){
+							document.getElementById("Ventanaflotante").style.display="block";
+							Pausa = true;		
+						});
+
+					$("body").on("click","#CierraFlotante", function(){
+						document.getElementById("Ventanaflotante").style.display="none";
+							Pausa = false;
+					});
+					$("body").on("click","#PausaVuelveMenu", function(){
+						document.getElementById("Ventanaflotante").style.display="none";
+						location.reload();
+					});
+					$("body").on("click","#btn_CompartirFB", function(){
+						CompartirEnFacebook();
+					});
+
+					
+
+					function IniciaTodo(){
+							//alert("Le dió click a Puntuaciones");
+							var contenedor = document.getElementById("TituloPantalla");
+							contenedor.remove();
+							contenedor = document.getElementById("Titulos");
+							contenedor.remove();
+
+							setupScene();
+							Escenario(scene);
+							render();
+							document.addEventListener('keydown', onKeyDown);
+							document.addEventListener('keyup', onKeyUp);	
+							AgregarElementos();							
+						}	
+	
+
+	}); //cierre del document.ready
+	
+
+</script>
+<script type="application/x-glsl" id="sky-vertex">  
+varying vec2 vUV;
+
+	void main(void) {  
+  	vUV = uv;
+  	vec4 pos = vec4(position, 1.0);
+  	gl_Position = projectionMatrix * modelViewMatrix * pos;
+}
+</script>
+
+<script type="application/x-glsl" id="sky-fragment">  
+	uniform sampler2D texture;  
+	varying vec2 vUV;
+	
+	void main(void) {  
+	vec4 sample = texture2D(texture, vUV);
+	gl_FragColor = vec4(sample.xyz, sample.w);
+}
+</script>  
+</head>
+<body background="Recursos/fondo3.jpg">
+	<br>
+	<br>	
+	<div id='Ventanaflotante' style=' left:42.5%; top:35%; border-radius:10px; position:absolute; width: 300px; height: 300px; background: rgba(0, 0, 0, 0.3); display:none; 
+	border-color: white;'> 
+	<br>
+	<center><h1><label style='color:white;'>~Pausa~</label></h1></center><br>	
+	<center><h2><label id='CierraFlotante' style='color:white;'>Reanudar</label></h2></center><br>
+	<center><h2><label id='PausaVuelveMenu' style='color:white;'>Volver al Menu</label></h2></center>
+	</div>
+
+	<div id='VentanaFinal' style=' left:35%; top:20%; border-radius:10px; position:absolute; width: 500px; height: 400px; background:rgba(10, 10, 10, 0.5); display:none;'> 
+	<br>
+	Hola
+	</div>
+
+			<center>
+				<div id="escena" style="background-image: url('Recursos/FondoDiv4.png'); height: 800px; width: 988px; "> 	
+				<!-- Aqui debo poner el canvas cuando le de clic a Jugar (Iniciar Juego) -->
+						
+				</div>
+			<center>
+		
+</body>
+</html>

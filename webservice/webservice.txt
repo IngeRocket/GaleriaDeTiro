@@ -1,0 +1,79 @@
+<?php
+	$action = $_POST['action'];
+
+	if ($action == "addProduct") 
+		addProduct();
+	else if ($action == "getProducts")
+		getProducts();
+		else if($action=="Funador")
+			Funador();
+
+
+	function connect() {
+		$databasehost = "127.0.0.1";
+		
+		$databaseuser = "root";
+		$databasepass = "root";
+		$databasename = "midb";
+
+		$mysqli = new mysqli($databasehost, $databaseuser, $databasepass, $databasename,3306);
+		if ($mysqli->connect_errno) {
+			echo "Problema con la conexion a la base de datos";
+		}
+		return $mysqli;
+	}
+
+	function addProduct() {
+		$name = $_POST["name"];
+		$detail = $_POST["detail"];
+		$price = $_POST["price"];
+
+		$mysqli = connect();
+
+		$result = $mysqli->query("INSERT INTO product(p_name, p_detail, p_price)VALUES('".$name."','".$detail."','".$price."')");
+		
+		if (!$result) {
+			echo "Problema al hacer un query: " . $mysqli->error;								
+		} else {
+			echo "Todo salio bien";		
+		}
+		
+		mysqli_close($mysqli);
+	}
+
+	function getProducts() {
+		$mysqli = connect();
+
+		$result = $mysqli->query("select * from product");	
+		
+		if (!$result) {
+			echo "Problema al hacer un query: " . $mysqli->error;								
+		} else {
+			// Recorremos los resultados devueltos
+			$rows = array();
+			while( $r = $result->fetch_assoc()) {
+				$rows[] = $r;
+			}			
+			// Codificamos los resultados a formato JSON y lo enviamos al HTML (Client-Side)
+			echo json_encode($rows);
+		}
+		
+		mysqli_close($mysqli);
+	}
+
+	function Funador(){
+		$name = $_POST["name"];
+		$sql="DELETE from product WHERE p_name='".$name."'";
+		$mysqli = connect();
+		$result = $mysqli->query($sql);
+
+		if (!$result) {
+			echo "Problema al hacer un query: " . $mysqli->error;								
+		} else {
+			echo "Todo salio bien";		
+		}
+		
+		mysqli_close($mysqli);
+
+	}
+?>
