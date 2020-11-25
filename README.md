@@ -1,0 +1,2 @@
+# GaleriaDeTiro
+ Proyecto de MI
